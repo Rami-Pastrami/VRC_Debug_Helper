@@ -1,3 +1,9 @@
-#  REPLACE TEXT HERE
+#  VRC Debug Helper
 
-This is a template for VRC worlds under VCC. If you are seeing this text publicly, please yell at Rami to fix his shit
+WIP
+
+A set of tools to help (me) debug and test Udon scripts and other elements
+
+Current Tools
+- Floating Text
+- configurable lines following points
