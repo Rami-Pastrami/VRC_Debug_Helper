@@ -6,42 +6,132 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 using Rami;
-using Cysharp.Threading.Tasks.Triggers;
+using System.Linq;
 
 namespace Rami.DebugHelper
 {
     public class BaseLine : UdonSharpBehaviour
     {
+        [field: SerializeField]
         public bool usingCenterText
         {
-            set { }
+            set 
+            {
+                if (value)
+                {
+                    centerText = GameObject.Instantiate(textPrefab);
+
+                    _usingCenterText = true;
+                }
+                else
+                {
+                    Destroy(centerText);
+                    centerText = null;
+
+                    _usingCenterText = false;
+                }
+            }
+            get { return _usingCenterText; }
         }
+
+        [field: SerializeField]
         public bool usingSegmentText
         {
-            set { }
+            set
+            {
+                if (value)
+                {
+                    GenerateSegmentGOArray();
+
+                    _usingSegmentText = true;
+                }
+                else
+                {
+                    DeleteSegmentGOArray();
+
+                    _usingSegmentText = false;
+                }
+            }
+            get { return _usingSegmentText; }
         }
 
-        public bool usingDistanceCenterText = true;
-        public bool usingDistanceSegmentText = true;
-        public bool followingRootTransformInstead = false;
+        [field: SerializeField]
+        public bool looping
+        {
+            set { lineRenderer.loop = value; }
+            get { return lineRenderer.loop; }
+        }
 
-        public Vector3 globalOffset = Vector3.zero;
-        public Vector3[] SegmentOffsets;
+        [field: SerializeField]
+        public Color colorStart
+        {
+            set { lineRenderer.startColor = value; }
+            get { return lineRenderer.startColor; }
+        }
 
+        [field: SerializeField]
+        public Color colorEnd
+        {
+            set { lineRenderer.endColor = value; }
+            get { return lineRenderer.endColor; }
+        }
+
+        [field: SerializeField]
+        public float lineWidth
+        {
+            set { lineRenderer.startWidth = value; lineRenderer.endWidth = value; }
+            get { return lineRenderer.startWidth; }
+        }
+
+
+
+        [SerializeField] GameObject textPrefab;
+
+
+        public Vector3[] SegmentPositions = {Vector3.zero, Vector3.zero };
+
+        LineRenderer lineRenderer;
         GameObject centerText = null;
         GameObject[] segmentTexts = null;
-
-        public GameObject REF_DebugText;
-
-
-
+        bool _usingCenterText = false;
+        bool _usingSegmentText = false;
+        int _previousVertexCount;
 
 
+        private void Start()
+        {
+            lineRenderer = GetComponent<LineRenderer>();
+            _previousVertexCount = SegmentPositions.Length;
+        }
+
+        private void Update()
+        {
+
+            /// update text positions if exist
+
+            lineRenderer.SetPositions(SegmentPositions);
+
+            // If number of segments changed as per number of Segment Positions, we must adjust number of Texts
+            if(SegmentPositions.Length != _previousVertexCount)
+            {
+                _previousVertexCount = SegmentPositions.Length;
+
+                if(usingSegmentText)
+                {
+                    usingSegmentText = false; usingSegmentText = true; // Property abuse lol
+                }
+
+                if(usingCenterText)
+                {
+                    usingCenterText = false; usingCenterText = true;
+                }
+            }
+
+            if(usingCenterText) { UpdateCenterTextPos(); }
+            if(usingSegmentText) { UpdateSegmentTextPos(); }
 
 
-
-
-
+        }
 
 
 
@@ -57,27 +147,42 @@ namespace Rami.DebugHelper
 
         void GenerateSegmentGOArray()
         {
-            segmentTexts = new GameObject[SegmentOffsets.Length - 1];
+            int offset = looping ? 0 : 1;
+            segmentTexts = new GameObject[_previousVertexCount - offset];
             for (int i = 0; i < segmentTexts.Length; ++i)
             {
-                GameObject go = Instantiate(REF_DebugText);
+                GameObject go = Instantiate(textPrefab);
                 segmentTexts[i] = go;
             }
         }
 
+
         void UpdateCenterTextPos()
         {
-            centerText.transform.position = Rami.Rami_Utils.CenterOfVector3s(SegmentOffsets) + globalOffset;
+            centerText.transform.position = Rami.Rami_Utils.CenterOfVector3s(SegmentPositions);
+        }
+
+        void UpdateSegmentTextPos()
+        {
+            for(int i = 0; i < _previousVertexCount - 1; ++i)
+            {
+                segmentTexts[i].transform.position = GetCenterOf1Segment(i);
+            }
+            if(looping)
+            {
+                segmentTexts.Last().transform.position = (SegmentPositions.First() + SegmentPositions.Last()) / 2.0f;
+            }
+
         }
 
         Vector3 GetCenterOf1Segment(int index)
         {
-            if (index - 1 > SegmentOffsets.Length | index < 0)
+            if (index - 1 > _previousVertexCount | index < 0)
             {
                 Debug.LogError("DEBUG_HELPER - Can't get segment of invalid index");
             }
 
-            return Rami.Rami_Utils.CenterOfVector3s(Rami.Rami_Utils.GetSubArrayFromArray_StartSize(SegmentOffsets, index, 2));
+            return Rami_Utils.CenterOfVector3s(Rami_Utils.GetSubArrayFromArray_StartSize(SegmentPositions, index, 2));
         }
 
 

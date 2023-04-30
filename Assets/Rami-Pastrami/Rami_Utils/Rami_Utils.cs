@@ -1,13 +1,12 @@
 ﻿// Created by Rami-Pastrami
 // Just some common functions used in my various projects
+// Up to date public repo can be found at https://github.com/Rami-Pastrami/Rami_Utils
 
 // Uncomment to enable safety warnings, useful for debugging. This should be commented out before release for performance reasons
 //#define DEBUG
 
 using System;
-using System.Linq;
 using UnityEngine;
-
 
 namespace Rami
 {
@@ -90,7 +89,7 @@ namespace Rami
         static public string Array2CSV<TYPE>(TYPE[] array)
         {
             string[] strArr = new string[array.Length];
-            for(int i = 0; i < array.Length; ++i)
+            for (int i = 0; i < array.Length; ++i)
             {
                 strArr[i] = array[i].ToString();
             }
@@ -107,13 +106,13 @@ namespace Rami
         /// <returns>Altered parent array</returns>
         static public TYPE[] WriteSubArrayOverArray<TYPE>(TYPE[] subArray, TYPE[] parentArray, int index)
         {
-            #if DEBUG
+#if DEBUG
             if (subArray.Length + index > parentArray.Length)
             {
                 //Only log a warning instead of an error so we cause a more useful error instead of stopping beforehand
                 Debug.LogWarning("Rami_Utils DEBUG - WriteSubArrayOverArray - index and subArray lengths are greater than parentArray length, this WILL cause an error");
             }
-            #endif
+#endif
 
             for (int i = 0; i < subArray.Length; ++i)
             {
@@ -132,16 +131,16 @@ namespace Rami
         /// <returns>Subarray of TYPE</returns>
         static public TYPE[] GetSubArrayFromArray_StartEnd<TYPE>(TYPE[] parentArray, int startIndex, int endIndex)
         {
-            #if DEBUG
-            if((startIndex < 0) | (endIndex > parentArray.Length))
+#if DEBUG
+            if ((startIndex < 0) | (endIndex > parentArray.Length))
             {
                 Debug.LogWarning("Rami_Utils DEBUG - GetSubArrayFromArray_StartEnd - start/end values are invalid. this WILL cause an error");
             }
-            #endif
+#endif
 
             TYPE[] output = new TYPE[endIndex - startIndex];
             int i = 0;
-            for(; startIndex < endIndex; ++startIndex)
+            for (; startIndex < endIndex; ++startIndex)
             {
                 output[i] = parentArray[startIndex];
                 i++;
@@ -164,11 +163,61 @@ namespace Rami
         }
 
         /// <summary>
+        /// Expands array from the start, with the first part being filled with a defined value and the rest kept as is
+        /// </summary>
+        /// <typeparam name="TYPE">The element type that the array contains</typeparam>
+        /// <param name="initialArray">The array you intend to expand</param>
+        /// <param name="numElementsToAdd">number of elements you intend to expand by</param>
+        /// <param name="fillingElement">The element th blank expanded spots will be filled with</param>
+        /// <returns>The expanded array</returns>
+        static public TYPE[] ExpandArrayFromStart<TYPE>(TYPE[] initialArray, int numElementsToAdd, TYPE fillingElement)
+        {
+            TYPE[] output = new TYPE[numElementsToAdd + initialArray.Length];
+
+            for (int i = 0; i < numElementsToAdd; ++i)
+            {
+                output[i] = fillingElement;
+            }
+
+            for (int i = 0; i < initialArray.Length; ++i)
+            {
+                output[i + numElementsToAdd] = initialArray[i];
+            }
+
+            return output;
+        }
+
+        /// <summary>
+        /// Expands array from the start, with the last part being filled with a defined value and the rest kept as is
+        /// </summary>
+        /// <typeparam name="TYPE">The element type that the array contains</typeparam>
+        /// <param name="initialArray">The array you intend to expand</param>
+        /// <param name="numElementsToAdd">number of elements you intend to expand by</param>
+        /// <param name="fillingElement">The element th blank expanded spots will be filled with</param>
+        /// <returns>The expanded array</returns>
+        static public TYPE[] ExpandArrayFromEnd<TYPE>(TYPE[] initialArray, int numElementsToAdd, TYPE fillingElement)
+        {
+            TYPE[] output = new TYPE[numElementsToAdd + initialArray.Length];
+
+            for (int i = 0; i < initialArray.Length; ++i)
+            {
+                output[i] = initialArray[i];
+            }
+
+            for (int i = 0; i < numElementsToAdd; ++i)
+            {
+                output[i + initialArray.Length] = fillingElement;
+            }
+
+            return output;
+        }
+
+        /// <summary>
         /// Converts a Vector2 to a float array
         /// </summary>
         /// <param name="input"></param>
         /// <returns>2 long float array</returns>
-        static public float[] Vector22FloatArr(Vector2 input) { return new float[] { input.x, input.y}; }
+        static public float[] Vector22FloatArr(Vector2 input) { return new float[] { input.x, input.y }; }
 
         /// <summary>
         /// Converts a Vector3 to a float array
@@ -284,7 +333,7 @@ namespace Rami
         }
 
         /// <summary>
-        /// returns midpoint
+        /// returns midpoint position vector from an array of transforms
         /// </summary>
         /// <param name="trans"></param>
         /// <returns></returns>
@@ -307,7 +356,7 @@ namespace Rami
         static public Vector3[] TransformArr2PosArr(Transform[] trans)
         {
             Vector3[] output = new Vector3[trans.Length];
-            for(int i = 0; i < trans.Length; ++i)
+            for (int i = 0; i < trans.Length; ++i)
             {
                 output[i] = trans[i].position;
             }

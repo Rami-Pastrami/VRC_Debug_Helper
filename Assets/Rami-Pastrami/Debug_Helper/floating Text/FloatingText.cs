@@ -7,7 +7,7 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 using TMPro;
-
+using Rami;
 
 
 
@@ -19,17 +19,23 @@ namespace Rami.DebugHelper
         public Vector3[] followingPositions;
         public Vector3 posOffset = Vector3.zero;
         public string prefix = "";
+        public string suffix = "";
 
         TextMeshProUGUI textbox;
 
         public string text
         {
-            set { textbox.text = prefix + value; }
+            set { textbox.text = prefix + value + suffix; }
         }
 
         public Color textColor
         {
             set { textbox.color = value; }
+        }
+
+        public float fontSize
+        {
+            set { textbox.fontSize = value; }
         }
 
 
@@ -43,7 +49,7 @@ namespace Rami.DebugHelper
         {
             if (followingPositions != null)
             {
-                transform.position = Rami.Rami_Utils.CenterOfVector3s(followingPositions) + posOffset;
+                transform.position = Rami_Utils.CenterOfVector3s(followingPositions) + posOffset;
             }
             else
             {
