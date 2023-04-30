@@ -18,7 +18,8 @@ namespace Rami.DebugHelper
             {
                 if (value)
                 {
-                    centerText = GameObject.Instantiate(textPrefab);
+                    GameObject go = GameObject.Instantiate(textPrefab);
+                    centerText = go.GetComponent<FloatingText>();
 
                     _usingCenterText = true;
                 }
@@ -40,13 +41,13 @@ namespace Rami.DebugHelper
             {
                 if (value)
                 {
-                    GenerateSegmentGOArray();
+                    GenerateSegmentCompArray();
 
                     _usingSegmentText = true;
                 }
                 else
                 {
-                    DeleteSegmentGOArray();
+                    DeleteSegmentCompArray();
 
                     _usingSegmentText = false;
                 }
@@ -90,20 +91,25 @@ namespace Rami.DebugHelper
         public Vector3[] SegmentPositions = {Vector3.zero, Vector3.zero };
 
         LineRenderer lineRenderer;
-        GameObject centerText = null;
-        GameObject[] segmentTexts = null;
+        protected FloatingText centerText = null;
+        protected FloatingText[] segmentTexts = null;
         bool _usingCenterText = false;
         bool _usingSegmentText = false;
         int _previousVertexCount;
 
 
-        private void Start()
+        protected virtual void Start()
         {
             lineRenderer = GetComponent<LineRenderer>();
+            if (lineRenderer == null )
+            {
+                // Why doesn't U# allow adding components?
+                Debug.LogError("LineRenderer component not found!");
+            }
             _previousVertexCount = SegmentPositions.Length;
         }
 
-        private void Update()
+        protected virtual void Update()
         {
 
             /// update text positions if exist
@@ -134,42 +140,42 @@ namespace Rami.DebugHelper
 
 
 
-        void DeleteSegmentGOArray()
+        void DeleteSegmentCompArray()
         {
             if (segmentTexts == null) { return; }
             for (int i = 0; i < segmentTexts.Length; i++)
             {
-                Destroy(segmentTexts[i]);
+                Destroy(segmentTexts[i].gameObject);
             }
             segmentTexts = null;
         }
 
-        void GenerateSegmentGOArray()
+        void GenerateSegmentCompArray()
         {
             int offset = looping ? 0 : 1;
-            segmentTexts = new GameObject[_previousVertexCount - offset];
+            segmentTexts = new FloatingText[_previousVertexCount - offset];
             for (int i = 0; i < segmentTexts.Length; ++i)
             {
                 GameObject go = Instantiate(textPrefab);
-                segmentTexts[i] = go;
+                segmentTexts[i] = go.GetComponent<FloatingText>();
             }
         }
 
 
         void UpdateCenterTextPos()
         {
-            centerText.transform.position = Rami.Rami_Utils.CenterOfVector3s(SegmentPositions);
+            centerText.gameObject.transform.position = Rami.Rami_Utils.CenterOfVector3s(SegmentPositions);
         }
 
         void UpdateSegmentTextPos()
         {
             for(int i = 0; i < _previousVertexCount - 1; ++i)
             {
-                segmentTexts[i].transform.position = GetCenterOf1Segment(i);
+                segmentTexts[i].gameObject.transform.position = GetCenterOf1Segment(i);
             }
             if(looping)
             {
-                segmentTexts[_previousVertexCount- 1].transform.position = (SegmentPositions[0] + SegmentPositions[_previousVertexCount - 1]) / 2.0f;
+                segmentTexts[_previousVertexCount- 1].gameObject.transform.position = (SegmentPositions[0] + SegmentPositions[_previousVertexCount - 1]) / 2.0f;
             }
 
         }
