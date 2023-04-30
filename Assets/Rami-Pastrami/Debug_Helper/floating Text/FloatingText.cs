@@ -33,11 +33,13 @@ namespace Rami.DebugHelper
             set { textbox.color = value; }
         }
 
+        // Why doesn't U# support fontsize?
+        /*
         public float fontSize
         {
             set { textbox.fontSize = value; }
         }
-
+        */
 
         private void Start()
         {
