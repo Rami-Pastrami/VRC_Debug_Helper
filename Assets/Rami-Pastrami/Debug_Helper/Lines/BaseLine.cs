@@ -6,7 +6,6 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 using Rami;
-using System.Linq;
 
 namespace Rami.DebugHelper
 {
@@ -170,7 +169,7 @@ namespace Rami.DebugHelper
             }
             if(looping)
             {
-                segmentTexts.Last().transform.position = (SegmentPositions.First() + SegmentPositions.Last()) / 2.0f;
+                segmentTexts[_previousVertexCount- 1].transform.position = (SegmentPositions[0] + SegmentPositions[_previousVertexCount - 1]) / 2.0f;
             }
 
         }
