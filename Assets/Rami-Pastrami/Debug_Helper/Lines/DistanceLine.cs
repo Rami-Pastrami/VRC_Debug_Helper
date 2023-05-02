@@ -19,7 +19,9 @@ namespace Rami.DebugHelper
         protected override void Start()
         {
             base.Start();
-
+            
+            //TEST
+            SegmentPositions[1] = new Vector3 (1, 1, 2);
         }
 
         protected override void Update()
@@ -55,7 +57,7 @@ namespace Rami.DebugHelper
                 totalDistance += Vector3.Distance(SegmentPositions[0], SegmentPositions[SegmentPositions.Length - 1]);
             }
 
-            return totalDistance.ToString(distanceUnit) + distanceUnit;
+            return totalDistance.ToString(numberFormat) + distanceUnit;
 
         }
 
@@ -74,7 +76,7 @@ namespace Rami.DebugHelper
         string FormattedDistanceBetween2Vertices(int index1, int index2)
         {
             float distance = distanceScaleMultiplier * Vector3.Distance(SegmentPositions[index1], SegmentPositions[index2]);
-            return distance.ToString(distanceUnit) + distanceUnit;
+            return distance.ToString(numberFormat) + distanceUnit;
         }
 
     }

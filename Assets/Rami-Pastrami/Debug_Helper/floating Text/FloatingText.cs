@@ -13,19 +13,18 @@ using Rami;
 
 namespace Rami.DebugHelper
 {
-    [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class FloatingText : UdonSharpBehaviour
     {
-        public Vector3[] followingPositions;
+        public Vector3[] followingPositions = {Vector3.zero};
         public Vector3 posOffset = Vector3.zero;
         public string prefix = "";
         public string suffix = "";
 
-        TextMeshProUGUI textbox;
+        [SerializeField] TextMeshProUGUI textbox;
 
         public string text
         {
-            set { textbox.text = prefix + value + suffix; }
+            set { Debug.Log("USED");  textbox.text = prefix + value + suffix; }
         }
 
         public Color textColor
@@ -41,23 +40,26 @@ namespace Rami.DebugHelper
         }
         */
 
-        private void Start()
+        private void Awake()
         {
-            textbox = GetComponent<TextMeshProUGUI>();
+            Debug.Log("This Prints");
         }
 
 
         private void Update()
         {
-            if (followingPositions != null)
+            Debug.Log("This Never Prints");
+            /*
+            if ( (followingPositions != null) && (followingPositions.Length > 0) )
             {
+                Debug.Log("FOllowing");
                 transform.position = Rami_Utils.CenterOfVector3s(followingPositions) + posOffset;
             }
             else
             {
                 transform.position = posOffset;
             }
-
+            */
         }
 
 

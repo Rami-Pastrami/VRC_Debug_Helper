@@ -11,7 +11,7 @@ namespace Rami.DebugHelper
 {
     public class BaseLine : UdonSharpBehaviour
     {
-        [field: SerializeField]
+
         public bool usingCenterText
         {
             set 
@@ -25,7 +25,7 @@ namespace Rami.DebugHelper
                 }
                 else
                 {
-                    Destroy(centerText);
+                    Destroy(centerText.gameObject);
                     centerText = null;
 
                     _usingCenterText = false;
@@ -34,7 +34,6 @@ namespace Rami.DebugHelper
             get { return _usingCenterText; }
         }
 
-        [field: SerializeField]
         public bool usingSegmentText
         {
             set
@@ -55,28 +54,24 @@ namespace Rami.DebugHelper
             get { return _usingSegmentText; }
         }
 
-        [field: SerializeField]
         public bool looping
         {
             set { lineRenderer.loop = value; }
             get { return lineRenderer.loop; }
         }
 
-        [field: SerializeField]
         public Color colorStart
         {
             set { lineRenderer.startColor = value; }
             get { return lineRenderer.startColor; }
         }
 
-        [field: SerializeField]
         public Color colorEnd
         {
             set { lineRenderer.endColor = value; }
             get { return lineRenderer.endColor; }
         }
 
-        [field: SerializeField]
         public float lineWidth
         {
             set { lineRenderer.startWidth = value; lineRenderer.endWidth = value; }
@@ -91,10 +86,11 @@ namespace Rami.DebugHelper
         public Vector3[] SegmentPositions = {Vector3.zero, Vector3.zero };
 
         LineRenderer lineRenderer;
-        protected FloatingText centerText = null;
-        protected FloatingText[] segmentTexts = null;
-        bool _usingCenterText = false;
-        bool _usingSegmentText = false;
+        [SerializeField] protected FloatingText centerText = null;
+        [SerializeField] protected FloatingText[] segmentTexts = null;
+        protected RectTransform[] segmentTextsTrans = null;
+        [SerializeField] bool _usingCenterText = false;
+        [SerializeField] bool _usingSegmentText = false;
         int _previousVertexCount;
 
 
@@ -107,6 +103,7 @@ namespace Rami.DebugHelper
                 Debug.LogError("LineRenderer component not found!");
             }
             _previousVertexCount = SegmentPositions.Length;
+
         }
 
         protected virtual void Update()
@@ -124,17 +121,21 @@ namespace Rami.DebugHelper
                 if(usingSegmentText)
                 {
                     usingSegmentText = false; usingSegmentText = true; // Property abuse lol
+                    if (usingSegmentText) { UpdateSegmentTextPos(); }
                 }
 
                 if(usingCenterText)
                 {
-                    usingCenterText = false; usingCenterText = true;
+                    //usingCenterText = false; usingCenterText = true;
+                    //if(usingCenterText) { UpdateCenterTextPos(); }
                 }
+
+
+
             }
 
-            if(usingCenterText) { UpdateCenterTextPos(); }
-            if(usingSegmentText) { UpdateSegmentTextPos(); }
-
+            
+            
 
         }
 
@@ -147,7 +148,6 @@ namespace Rami.DebugHelper
             {
                 Destroy(segmentTexts[i].gameObject);
             }
-            segmentTexts = null;
         }
 
         void GenerateSegmentCompArray()
@@ -158,24 +158,25 @@ namespace Rami.DebugHelper
             {
                 GameObject go = Instantiate(textPrefab);
                 segmentTexts[i] = go.GetComponent<FloatingText>();
+                segmentTextsTrans[i] = go.GetComponent<RectTransform>();
             }
         }
 
 
         void UpdateCenterTextPos()
         {
-            centerText.gameObject.transform.position = Rami.Rami_Utils.CenterOfVector3s(SegmentPositions);
+            centerText.followingPositions = SegmentPositions;
         }
 
         void UpdateSegmentTextPos()
         {
             for(int i = 0; i < _previousVertexCount - 1; ++i)
             {
-                segmentTexts[i].gameObject.transform.position = GetCenterOf1Segment(i);
+                segmentTexts[i].followingPositions = Rami_Utils.GetSubArrayFromArray_StartSize(SegmentPositions,i,2);
             }
             if(looping)
             {
-                segmentTexts[_previousVertexCount- 1].gameObject.transform.position = (SegmentPositions[0] + SegmentPositions[_previousVertexCount - 1]) / 2.0f;
+                segmentTexts[_previousVertexCount - 1].followingPositions = new Vector3[] { SegmentPositions[0], SegmentPositions[_previousVertexCount - 1] };
             }
 
         }
@@ -190,6 +191,11 @@ namespace Rami.DebugHelper
             return Rami_Utils.CenterOfVector3s(Rami_Utils.GetSubArrayFromArray_StartSize(SegmentPositions, index, 2));
         }
 
+
+        private void OnDestroy()
+        {
+            DeleteSegmentCompArray();
+        }
 
     }
 }
