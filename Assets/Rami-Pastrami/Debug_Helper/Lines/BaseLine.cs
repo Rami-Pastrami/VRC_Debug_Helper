@@ -18,7 +18,7 @@ namespace Rami.DebugHelper
             {
                 if (value)
                 {
-                    GameObject go = GameObject.Instantiate(textPrefab);
+                    GameObject go = VRCInstantiate(textPrefab);
                     centerText = go.GetComponent<FloatingText>();
 
                     _usingCenterText = true;
@@ -104,6 +104,8 @@ namespace Rami.DebugHelper
             }
             _previousVertexCount = SegmentPositions.Length;
 
+
+            //usingCenterText = true;
         }
 
         protected virtual void Update()
@@ -121,21 +123,19 @@ namespace Rami.DebugHelper
                 if(usingSegmentText)
                 {
                     usingSegmentText = false; usingSegmentText = true; // Property abuse lol
-                    if (usingSegmentText) { UpdateSegmentTextPos(); }
                 }
 
                 if(usingCenterText)
                 {
-                    //usingCenterText = false; usingCenterText = true;
-                    //if(usingCenterText) { UpdateCenterTextPos(); }
+                    usingCenterText = false; usingCenterText = true;
                 }
 
 
 
             }
 
-            
-            
+            if (usingCenterText) { UpdateCenterTextPos(); }
+            if (usingSegmentText) { UpdateSegmentTextPos(); }
 
         }
 

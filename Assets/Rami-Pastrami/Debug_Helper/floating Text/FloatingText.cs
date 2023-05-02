@@ -46,10 +46,9 @@ namespace Rami.DebugHelper
         }
 
 
-        private void Update()
+        public void Update()
         {
             Debug.Log("This Never Prints");
-            /*
             if ( (followingPositions != null) && (followingPositions.Length > 0) )
             {
                 Debug.Log("FOllowing");
@@ -59,7 +58,6 @@ namespace Rami.DebugHelper
             {
                 transform.position = posOffset;
             }
-            */
         }
 
 
