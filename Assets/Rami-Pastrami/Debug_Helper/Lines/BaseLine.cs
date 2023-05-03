@@ -159,6 +159,7 @@ namespace Rami.DebugHelper
             for (int i = 0; i < segmentTexts.Length; ++i)
             {
                 GameObject go = Instantiate(textPrefab);
+                go.transform.SetParent(transform, false);
                 segmentTexts[i] = go.GetComponent<FloatingText>();
             }
         }

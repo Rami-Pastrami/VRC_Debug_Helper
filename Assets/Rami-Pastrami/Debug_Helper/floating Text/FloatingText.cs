@@ -50,6 +50,8 @@ namespace Rami.DebugHelper
             {
                 transform.position = posOffset;
             }
+
+            transform.rotation = Quaternion.LookRotation(transform.position - Networking.LocalPlayer.GetBonePosition(HumanBodyBones.Head));
         }
 
 

@@ -19,12 +19,6 @@ namespace Rami.DebugHelper
         protected override void Start()
         {
             base.Start();
-            
-            //TEST
-            SegmentPositions[1] = new Vector3 (1, 1, 2);
-
-
-            usingCenterText = true;
         }
 
         protected override void Update()
