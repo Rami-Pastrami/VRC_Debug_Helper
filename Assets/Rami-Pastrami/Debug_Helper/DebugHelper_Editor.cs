@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Rami.DebugHelper;
+using VRC.Udon.Editor.ProgramSources.UdonGraphProgram.UI.GraphView.UdonNodes;
 
 #if UNITY_EDITOR
 [CustomEditor(typeof(DistanceLine))]
@@ -19,20 +20,14 @@ public class DebugHelper_Editor : Editor
 
         if(GUILayout.Button("Toggle Center Text"))
         {
-            DL.usingCenterText = !DL.usingCenterText;
+            
         }
         if (GUILayout.Button("Toggle Segment Text"))
         {
-            DL.usingSegmentText = !DL.usingSegmentText;
+            
         }
 
-        int _numPoints = 0;
-        EditorGUILayout.IntField("Number of Vertices", _numPoints);
 
-        if (GUILayout.Button("Apply Vertices count"))
-        {
-            Debug.Log(_numPoints);
-        }
     }
 }
 #endif

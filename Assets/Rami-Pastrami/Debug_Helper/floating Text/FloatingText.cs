@@ -24,7 +24,7 @@ namespace Rami.DebugHelper
 
         public string text
         {
-            set { Debug.Log("USED");  textbox.text = prefix + value + suffix; }
+            set { textbox.text = prefix + value + suffix; }
         }
 
         public Color textColor
@@ -40,18 +40,10 @@ namespace Rami.DebugHelper
         }
         */
 
-        private void Awake()
-        {
-            Debug.Log("This Prints");
-        }
-
-
         public void Update()
         {
-            Debug.Log("This Never Prints");
             if ( (followingPositions != null) && (followingPositions.Length > 0) )
             {
-                Debug.Log("FOllowing");
                 transform.position = Rami_Utils.CenterOfVector3s(followingPositions) + posOffset;
             }
             else

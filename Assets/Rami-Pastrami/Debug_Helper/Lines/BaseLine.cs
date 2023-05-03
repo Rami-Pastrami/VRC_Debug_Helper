@@ -19,7 +19,9 @@ namespace Rami.DebugHelper
                 if (value)
                 {
                     GameObject go = VRCInstantiate(textPrefab);
+                    go.transform.SetParent(transform, false);
                     centerText = go.GetComponent<FloatingText>();
+
 
                     _usingCenterText = true;
                 }
@@ -88,7 +90,6 @@ namespace Rami.DebugHelper
         LineRenderer lineRenderer;
         [SerializeField] protected FloatingText centerText = null;
         [SerializeField] protected FloatingText[] segmentTexts = null;
-        protected RectTransform[] segmentTextsTrans = null;
         [SerializeField] bool _usingCenterText = false;
         [SerializeField] bool _usingSegmentText = false;
         int _previousVertexCount;
@@ -105,7 +106,6 @@ namespace Rami.DebugHelper
             _previousVertexCount = SegmentPositions.Length;
 
 
-            //usingCenterText = true;
         }
 
         protected virtual void Update()
@@ -119,8 +119,10 @@ namespace Rami.DebugHelper
             if(SegmentPositions.Length != _previousVertexCount)
             {
                 _previousVertexCount = SegmentPositions.Length;
+                lineRenderer.positionCount = (_previousVertexCount);
+                lineRenderer.SetPositions(SegmentPositions);
 
-                if(usingSegmentText)
+                if (usingSegmentText)
                 {
                     usingSegmentText = false; usingSegmentText = true; // Property abuse lol
                 }
@@ -158,7 +160,6 @@ namespace Rami.DebugHelper
             {
                 GameObject go = Instantiate(textPrefab);
                 segmentTexts[i] = go.GetComponent<FloatingText>();
-                segmentTextsTrans[i] = go.GetComponent<RectTransform>();
             }
         }
 

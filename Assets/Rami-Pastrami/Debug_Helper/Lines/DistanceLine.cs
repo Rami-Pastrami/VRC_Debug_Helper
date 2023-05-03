@@ -22,6 +22,9 @@ namespace Rami.DebugHelper
             
             //TEST
             SegmentPositions[1] = new Vector3 (1, 1, 2);
+
+
+            usingCenterText = true;
         }
 
         protected override void Update()
@@ -39,10 +42,6 @@ namespace Rami.DebugHelper
             }
 
         }
-
-
-
-
 
         string FormattedDistanceBetweenAllVertices()
         {
